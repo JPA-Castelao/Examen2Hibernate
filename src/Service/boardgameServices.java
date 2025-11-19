@@ -29,6 +29,7 @@ public class boardgameServices {
 
         } catch (Exception e) {
             System.err.println("ERROR AL CREAR BOARDGAME: " + e.getMessage());
+            throw new RuntimeException();
         }
 
 
@@ -68,7 +69,6 @@ public class boardgameServices {
 
     public List<boardgame> listarBoardgames() {
         try (Session ses = HibernateConfig.getSessionFactory().openSession()) {
-            Transaction trans = ses.beginTransaction();
 
             List<boardgame> listaBoardgames = ses.createQuery("from boardgame", boardgame.class).getResultList();
             return listaBoardgames;
@@ -90,23 +90,70 @@ public class boardgameServices {
     }
 
     public void actualizarDuracion(int anoPublicacion) {
+
         try (Session ses = HibernateConfig.getSessionFactory().openSession()) {
-            Transaction transaction = ses.beginTransaction();
+            Transaction trans = ses.beginTransaction();
+            List<boardgame> query = ses.createQuery("from boardgame where anopublicacion >= :anoP", boardgame.class)
+                    .setParameter("anoP", anoPublicacion)
+                    .getResultList();
+            if (!query.isEmpty()) {
 
-            List<boardgame> listaBoardgames = listarBoardgames();
+                for (boardgame b : query) {
 
-            for (boardgame b : listaBoardgames) {
-                if (b.getAnopublicacion() >= anoPublicacion) {
-                    b.setDuracionminutos(b.getDuracionminutos() + 120);
-                    ses.save(b);
+                    b.setDuracionminutos(120);
+                    ses.update(b);
                 }
+
+            } else {
+
+                System.err.println("NINGUN ELEMENTO COINCIDE");
 
             }
 
+            trans.commit();
+
+
         } catch (Exception e) {
-            System.err.println("ERROR AO AUMENTAR A DURACION");
+            System.err.println("ERROR TIPO AL ACTUALIZAR DURACION: " + e.getMessage());
         }
 
     }
 
+    public void borrarBoardgame(int id) {
+
+        try (Session ses = HibernateConfig.getSessionFactory().openSession()) {
+            Transaction trans = ses.beginTransaction();
+            boardgame bg = ses.get(boardgame.class, id);
+            if (bg != null) {
+                ses.delete(bg);
+            } else {
+
+                System.out.println("BOARDGAME NO ENCONTRADO");
+            }
+
+            trans.commit();
+        } catch (Exception e) {
+
+            System.err.println("ERROR AL BORRAR BOARDGAME: " + e.getMessage());
+        }
+
+
+    }
+
+    public void borrarTodo() {
+        try (Session ses = HibernateConfig.getSessionFactory().openSession()) {
+
+            Transaction trans = ses.beginTransaction();
+
+            List<boardgame> listaBoardgames = listarBoardgames();
+            for (boardgame b : listaBoardgames) {
+                borrarBoardgame(b.getIdxogo());
+            }
+            trans.commit();
+
+
+        } catch (Exception e) {
+            System.err.println("ERROR AL BORRAR BOARDGAME: " + e.getMessage());
+        }
+    }
 }

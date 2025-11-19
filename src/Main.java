@@ -9,8 +9,7 @@ public class Main {
 
 
         System.out.println("Insire 5 elementos na táboa boardgame");
-
-        // bs.crearBoardgame("Catan", "Kosmos", 4, 90, 1995);
+//        bs.crearBoardgame("Catan", "Kosmos", 4, 90, 1995);
 //        bs.crearBoardgame("Carcassonne", "Hans im Glück", 5, 45, 2000);
 //        bs.crearBoardgame("Gloomhaven", "Cephalofair Games", 4, 120, 2017);
 //        bs.crearBoardgame("Terraforming Mars", "Stronghold Games", 5, 120, 2016);
@@ -18,12 +17,11 @@ public class Main {
 
         System.out.println("Lista tódo-los elementos da táboa boardgame");
 
-        bs.listarBoardgames();
+        bs.mostrarLista(bs.listarBoardgames());
 
 
         System.out.println("Selecciona de db os boardgames publicados despois do 2015 e sube a súa duración 120 minutos");
 
-        bs.mostrarLista(bs.listarBoardgames());
         bs.actualizarDuracion(2015);
 
 
@@ -35,7 +33,12 @@ public class Main {
         System.out.println("Borra tódo-los boardgames");
 
 
+        bs.borrarTodo();
+        bs.mostrarLista(bs.listarBoardgames());
+
         System.out.println("Insire 5 elementos na táboa anime");
+
+
 
 
         System.out.println("Lista tódo-los elementos da táboa anime");
